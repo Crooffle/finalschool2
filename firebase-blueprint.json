@@ -1,0 +1,27 @@
+{
+  "entities": {
+    "Submission": {
+      "title": "Submission",
+      "description": "User thoughts on what kind of person Zahra is",
+      "type": "object",
+      "properties": {
+        "text": {
+          "type": "string",
+          "description": "The submitted answer"
+        },
+        "createdAt": {
+          "type": "string",
+          "format": "timestamp",
+          "description": "Server timestamp of submission"
+        }
+      },
+      "required": ["text", "createdAt"]
+    }
+  },
+  "firestore": {
+    "submissions/{submissionId}": {
+      "schema": { "$ref": "#/entities/Submission" },
+      "description": "Collection of submissions for the question"
+    }
+  }
+}

@@ -1,0 +1,32 @@
+@import url('https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;1,300;1,400&family=Lora:ital,wght@0,400;0,500;1,400;1,500&display=swap');
+@import "tailwindcss";
+
+@theme {
+  --color-brand-gold: #fde047;
+  --color-brand-rose: #fda4af;
+  --color-brand-warm: #d4a373;
+  --color-brand-dark: #1c1917;
+  --font-sans: "Lora", ui-serif, Georgia, Cambria, "Times New Roman", Times, serif;
+  --font-display: "Cormorant Garamond", ui-serif, Georgia, Cambria, "Times New Roman", Times, serif;
+}
+
+body {
+  background-color: #0c0a09;
+  color: #f5f5f4;
+  overflow-x: hidden;
+}
+
+/* Custom glow utility */
+.glow-text {
+  text-shadow: 0 0 20px rgba(253, 224, 71, 0.3), 0 0 40px rgba(253, 164, 175, 0.2);
+}
+
+.glow-box {
+  box-shadow: 0 0 30px rgba(253, 224, 71, 0.05), 0 0 60px rgba(253, 164, 175, 0.05);
+}
+
+/* Hide scrollbar for a cleaner look */
+::-webkit-scrollbar {
+  width: 0px;
+  background: transparent;
+}
