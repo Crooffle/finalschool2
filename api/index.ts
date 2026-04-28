@@ -2,8 +2,6 @@ import express from 'express';
 import cookieParser from 'cookie-parser';
 import bcrypt from 'bcryptjs';
 import jwt from 'jsonwebtoken';
-import { auth, db } from '../src/lib/firebase.js';
-import { collection, doc, setDoc, getDocs, query, where } from 'firebase/firestore';
 
 const JWT_SECRET = process.env.JWT_SECRET || 'secret-jwt-key-2026';
 const SITE_PASS = process.env.SITE_PASSWORD || 'thanksforall';
@@ -11,7 +9,9 @@ const ADMIN_PASS = process.env.ADMIN_PASSWORD || 'rakhasangatbaik';
 const siteHash = bcrypt.hashSync(SITE_PASS, 10);
 const adminHash = bcrypt.hashSync(ADMIN_PASS, 10);
 
-const DB_SECRET = 'super_secret_backend_key';
+// In-Memory Database
+let submissions: any[] = [];
+let nextId = 1;
 
 const app = express();
 
@@ -84,11 +84,18 @@ app.post('/api/logout', (req, res) => {
   res.json({ success: true });
 });
 
-app.post('/api/submissions', requireVisitor, async (req: any, res: any) => {
+app.post('/api/submissions', requireVisitor, (req: any, res: any) => {
   try {
     const { text } = req.body;
-    const docRef = doc(collection(db, 'submissions'));
-    await setDoc(docRef, { text, serverSecret: DB_SECRET, createdAt: new Date().toISOString() });
+    
+    const newSubmission = {
+      id: String(nextId++),
+      text,
+      createdAt: new Date().toISOString()
+    };
+    
+    submissions.push(newSubmission);
+    
     res.json({ success: true });
   } catch (e) {
     console.error(e);
@@ -96,12 +103,12 @@ app.post('/api/submissions', requireVisitor, async (req: any, res: any) => {
   }
 });
 
-app.get('/api/submissions', requireAdmin, async (req: any, res: any) => {
+app.get('/api/submissions', requireAdmin, (req: any, res: any) => {
   try {
-    const q = query(collection(db, 'submissions'), where('serverSecret', '==', DB_SECRET));
-    const snapshot = await getDocs(q);
-    const data = snapshot.docs.map((doc: any) => ({ id: doc.id, ...doc.data() }));
-    data.sort((a: any, b: any) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime());
+    // Return a copy sorted by newest first
+    const data = [...submissions].sort((a: any, b: any) => 
+      new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()
+    );
     res.json(data);
   } catch (e) {
     console.error(e);
