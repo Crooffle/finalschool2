@@ -15,7 +15,14 @@ const DB_SECRET = 'super_secret_backend_key';
 
 const app = express();
 
-app.use(express.json());
+// Vercel automatically parses the body. express.json() will hang if the stream is already consumed.
+app.use((req, res, next) => {
+  if (req.body !== undefined) {
+    next();
+  } else {
+    express.json()(req, res, next);
+  }
+});
 app.use(cookieParser());
 
 // Check Visitor Auth (includes Admin because Admin usually implies viewing the site)
